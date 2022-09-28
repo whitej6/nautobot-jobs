@@ -70,7 +70,7 @@ class PopulateNautobot(Job):
         for site in sites:
             self.log_info(site)
             self.log_info(continents)
-            country = Region.objects.get_or_create(name=site["iso_country"], slug=slugify(site["iso_country"]), parent=continents[site['continent']])
+            country = Region.objects.get_or_create(name=site["iso_country"], slug=slugify(site["iso_country"]), parent=continents[site['continent']])[0]
             site = Site.objects.create(
                 name=site['iata_code']+"-01",
                 slug=slugify(site['iata_code']+"-01"),
