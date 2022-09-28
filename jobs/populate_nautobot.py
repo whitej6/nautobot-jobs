@@ -68,6 +68,8 @@ class PopulateNautobot(Job):
         retired = Status.objects.get(name="Retired")
         self.log_info("Creating Site, Country Regions, and Prefixes.")
         for site in sites:
+            self.log_info(site)
+            self.log_info(continents)
             country = Region.objects.get_or_create(name=site["iso_country"], slug=slugify(site["iso_country"]), parent=continents[site['continent']])
             site = Site.objects.create(
                 name=site['iata_code']+"-01",
