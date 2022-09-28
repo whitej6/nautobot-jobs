@@ -77,8 +77,8 @@ class PopulateNautobot(Job):
                 region=country,
                 status=retired if site['iata_code'] == 'closed' else active,
                 facility=site['name'],
-                latitude=site['coordinates'].split(",")[0],
-                longitude=site['coordinates'].split(", ")[-1],
+                latitude=float(site['coordinates'].split(",")[0]),
+                longitude=float(site['coordinates'].split(", ")[-1]),
                 description=f"{site['name']} located in {site['municipality']}"
             )
             prefix = str(self.parent_prefix.f.get_first_available_prefix().network)
