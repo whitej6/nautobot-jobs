@@ -43,7 +43,7 @@ class PopulateNautobot(Job):
         unique_airports = {i['iata_code'] :i for i in resp.json() if i['iata_code']}
         if not num_sites:
             list(unique_airports.values())
-        return list(unique_airports.values())[int(num_sites)]
+        return list(unique_airports.values())[:int(num_sites)]
 
     def _create_parent_regions(self):
         mapper = {}
