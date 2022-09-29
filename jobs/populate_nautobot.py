@@ -69,14 +69,14 @@ class PopulateNautobot(Job):
         self.log_info("Creating Site, Country Regions, and Prefixes.")
         for site in sites:
             country = Region.objects.get_or_create(name=site["iso_country"], slug=slugify(site["iso_country"]), parent=continents[site['continent']])[0]
-            site = Site.objects.create(
+            site = Site.objects.get_or_create(
                 name=site['iata_code']+"-01",
                 slug=slugify(site['iata_code']+"-01"),
                 region=country,
                 status=retired if site['iata_code'] == 'closed' else active,
                 facility=site['name'],
                 description=f"{site['name']} located in {site['municipality']}"
-            )
+            )[0]
             prefix = str(self.parent_prefix.get_first_available_prefix().network)
             Prefix.objects.create(network=prefix, prefix_length=22, site=site)
 
