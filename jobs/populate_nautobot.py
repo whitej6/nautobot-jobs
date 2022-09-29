@@ -55,7 +55,7 @@ class PopulateNautobot(Job):
         if role == "wan":
             return DeviceType.objects.get(model="MX104-PREMIUM")
         if role == "dist":
-            return DeviceType.objects.get(model="Arista DCS-7048-T")
+            return DeviceType.objects.get(model="DCS-7048-T")
         if role == "bb":
             return DeviceType.objects.get(model="Nexus 9396TX")
         return DeviceType.objects.get(model="Catalyst 9300L-48P-4X")
@@ -68,8 +68,6 @@ class PopulateNautobot(Job):
         retired = Status.objects.get(name="Retired")
         self.log_info("Creating Site, Country Regions, and Prefixes.")
         for site in sites:
-            self.log_info(site)
-            self.log_info(continents)
             country = Region.objects.get_or_create(name=site["iso_country"], slug=slugify(site["iso_country"]), parent=continents[site['continent']])[0]
             site = Site.objects.create(
                 name=site['iata_code']+"-01",
