@@ -135,7 +135,6 @@ class PopulateNautobot(Job):
             prefix = Prefix.objects.get(site=site)
             wan1 = Device.objects.create(
                 name=f"{site.slug}-wan-01",
-                slug=f"{site.slug}-wan-01",
                 platform=platforms["wan"],
                 device_role=roles["wan"]["role"],
                 device_type=roles["wan"]["type"],
@@ -144,7 +143,6 @@ class PopulateNautobot(Job):
             )
             wan2 = Device.objects.create(
                 name=f"{site.slug}-wan-02",
-                slug=f"{site.slug}-wan-02",
                 platform=platforms["wan"],
                 device_role=roles["wan"]["role"],
                 device_type=roles["wan"]["type"],
@@ -154,7 +152,6 @@ class PopulateNautobot(Job):
             self._connect_devices(wan1, wan2, prefix)
             bb1 = Device.objects.create(
                 name=f"{site.slug}-bb-01",
-                slug=f"{site.slug}-bb-01",
                 platform=platforms["bb"],
                 device_role=roles["bb"]["role"],
                 device_type=roles["bb"]["type"],
@@ -163,7 +160,6 @@ class PopulateNautobot(Job):
             )
             bb2 = Device.objects.create(
                 name=f"{site.slug}-bb-02",
-                slug=f"{site.slug}-bb-02",
                 platform=platforms["bb"],
                 device_role=roles["bb"]["role"],
                 device_type=roles["bb"]["type"],
@@ -174,7 +170,6 @@ class PopulateNautobot(Job):
             self._connect_devices(wan2, bb2, prefix)
             dist1 = Device.objects.create(
                 name=f"{site.slug}-dist-01",
-                slug=f"{site.slug}-dist-01",
                 platform=platforms["dist"],
                 device_role=roles["dist"]["role"],
                 device_type=roles["dist"]["type"],
@@ -183,7 +178,6 @@ class PopulateNautobot(Job):
             )
             dist2 = Device.objects.create(
                 name=f"{site.slug}-dist-02",
-                slug=f"{site.slug}-dist-02",
                 platform=platforms["dist"],
                 device_role=roles["dist"]["role"],
                 device_type=roles["dist"]["type"],
@@ -193,28 +187,16 @@ class PopulateNautobot(Job):
             self._connect_devices(bb1, dist1, prefix)
             self._connect_devices(dist2, dist2, prefix)
             for i in range(44):
-                access1 = Device.objects.create(
-                    name=f"{site.slug}-access-01",
-                    slug=f"{site.slug}-access-01",
+                access = Device.objects.create(
+                    name=f"{site.slug}-access-0{i}",
                     platform=platforms["access"],
                     device_role=roles["access"]["role"],
                     device_type=roles["access"]["type"],
                     site=site,
                     status=status
                 )
-                access2 = Device.objects.create(
-                    name=f"{site.slug}-access-02",
-                    slug=f"{site.slug}-access-02",
-                    platform=platforms["access"],
-                    device_role=roles["access"]["role"],
-                    device_type=roles["access"]["type"],
-                    site=site,
-                    status=status
-                )
-                self._connect_devices(access1, dist1, prefix)
-                self._connect_devices(access1, dist2, prefix)
-                self._connect_devices(access2, dist1, prefix)
-                self._connect_devices(access2, dist2, prefix)
+                self._connect_devices(access, dist1, prefix)
+                self._connect_devices(access, dist2, prefix)
 
     def run(self, data, commit):
         self.log_info("Gathering Site Codes.")
