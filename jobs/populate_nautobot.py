@@ -118,7 +118,7 @@ class PopulateNautobot(Job):
         self.log_info(ip[1])
         self.log_info(IFACE_CT)
         self.log_info(iface1.id)
-        IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface1.id, status=active)
+        IPAddress(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface1.id, status=active).validated_save()
         ip = prefix.get_first_available_ip().split("/")
         IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface2.id, status=active)
         Cable.objects.create(
