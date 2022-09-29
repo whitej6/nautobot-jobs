@@ -48,7 +48,7 @@ class PopulateNautobot(Job):
     def _create_parent_regions(self):
         mapper = {}
         for k, v in CONTINENT_MAP.items():
-            mapper.update({k: Region.objects.create(name=v, slug=slugify(v))})
+            mapper.update({k: Region.objects.get_or_create(name=v, slug=slugify(v))[0]})
         return mapper
 
     def _get_dev_type(self, role):
@@ -61,7 +61,7 @@ class PopulateNautobot(Job):
         return DeviceType.objects.get(model="Catalyst 9300L-48P-4X")
 
     def _create_sites(self, sites):
-        self.parent_prefix = Prefix.objects.create(network="10.0.0.0", prefix_length=8)
+        self.parent_prefix = Prefix.objects.get_or_create(network="10.0.0.0", prefix_length=8)[0]
         self.log_info("Creating Parent Regions.")
         continents = self._create_parent_regions()
         active = Status.objects.get(name="Active")
@@ -101,10 +101,10 @@ class PopulateNautobot(Job):
         juniper = Manufacturer.objects.get(name="Juniper")
         arista = Manufacturer.objects.get(name="Arista")
         return {
-            "access": Platform.objects.create(name="cisco_ios", slug="cisco_ios", manufacturer=cisco),
-            "bb": Platform.objects.create(name="cisco_nxos", slug="cisco_nxos", manufacturer=cisco),
-            "wan": Platform.objects.create(name="juniper_junos", slug="juniper_junos", manufacturer=juniper),
-            "dist": Platform.objects.create(name="arista_eos", slug="arista_eos", manufacturer=arista),
+            "access": Platform.objects.get_or_create(name="cisco_ios", slug="cisco_ios", manufacturer=cisco)[0],
+            "bb": Platform.objects.get_or_create(name="cisco_nxos", slug="cisco_nxos", manufacturer=cisco)[0],
+            "wan": Platform.objects.get_or_create(name="juniper_junos", slug="juniper_junos", manufacturer=juniper)[0],
+            "dist": Platform.objects.get_or_create(name="arista_eos", slug="arista_eos", manufacturer=arista)[0],
         }
 
     def _connect_devices(self, dev1, dev2, prefix):
@@ -132,7 +132,7 @@ class PopulateNautobot(Job):
         platforms = self._create_platforms()
         status = Status.objects.get(name="Active")
         for site in Site.objects.all():
-            prefix = Prefix.objects.get(site=site)
+            prefix = Prefix.objects.filter(site=site).first()
             wan1 = Device.objects.create(
                 name=f"{site.slug}-wan-01",
                 platform=platforms["wan"],
