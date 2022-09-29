@@ -114,10 +114,6 @@ class PopulateNautobot(Job):
         prefix = str(prefix.get_first_available_prefix().network)
         prefix = Prefix.objects.create(network=prefix, prefix_length=31, site=dev1.site, is_pool=True, status=active)
         ip = prefix.get_first_available_ip().split("/")
-        self.log_info(ip[0])
-        self.log_info(ip[1])
-        self.log_info(IFACE_CT)
-        self.log_info(iface1.id)
         IPAddress(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface1.id, status=active).validated_save()
         ip = prefix.get_first_available_ip().split("/")
         IPAddress(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface2.id, status=active).validated_save()
@@ -202,6 +198,7 @@ class PopulateNautobot(Job):
                 )[0]
                 self._connect_devices(access, dist1, prefix)
                 self._connect_devices(access, dist2, prefix)
+            self.log_info(f"{site.name} fully created.")
 
     def run(self, data, commit):
         self.log_info("Gathering Site Codes.")
