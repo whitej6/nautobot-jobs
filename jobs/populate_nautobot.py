@@ -61,10 +61,10 @@ class PopulateNautobot(Job):
         return DeviceType.objects.get(model="Catalyst 9300L-48P-4X")
 
     def _create_sites(self, sites):
-        self.parent_prefix = Prefix.objects.get_or_create(network="10.0.0.0", prefix_length=8)[0]
+        active = Status.objects.get(name="Active")
+        self.parent_prefix = Prefix.objects.get_or_create(network="10.0.0.0", prefix_length=8, status=active)[0]
         self.log_info("Creating Parent Regions.")
         continents = self._create_parent_regions()
-        active = Status.objects.get(name="Active")
         retired = Status.objects.get(name="Retired")
         self.log_info("Creating Site, Country Regions, and Prefixes.")
         for site in sites:
@@ -78,7 +78,7 @@ class PopulateNautobot(Job):
                 description=f"{site['name']} located in {site['municipality']}"
             )[0]
             prefix = str(self.parent_prefix.get_first_available_prefix().network)
-            Prefix.objects.create(network=prefix, prefix_length=22, site=site)
+            Prefix.objects.create(network=prefix, prefix_length=22, site=site, status=active)
 
     def _create_device_roles(self):
         self.log_info("Creating Device Roles.")
@@ -87,7 +87,7 @@ class PopulateNautobot(Job):
             dev_roles.update(
                 {
                     i: {
-                        "role": DeviceRole.objects.create(name=i, slug=i),
+                        "role": DeviceRole.objects.get_or_create(name=i, slug=i)[0],
                         "type": self._get_dev_type(i)
                     }
                 }
@@ -108,10 +108,11 @@ class PopulateNautobot(Job):
         }
 
     def _connect_devices(self, dev1, dev2, prefix):
+        active = Status.objects.get(name="Active")
         iface1 = dev1.interfaces.filter(cable__isnull=True).exclude(mgmt_only=True).first()
         iface2 = dev2.interfaces.filter(cable__isnull=True).exclude(mgmt_only=True).first()
         prefix = str(prefix.get_first_available_prefix().network)
-        prefix = Prefix.objects.create(network=prefix, prefix_length=31, site=dev1.site, is_pool=True)
+        prefix = Prefix.objects.create(network=prefix, prefix_length=31, site=dev1.site, is_pool=True, status=active)
         ip = prefix.get_first_available_ip().split("/")
         IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface1.id)
         ip = prefix.get_first_available_ip().split("/")
