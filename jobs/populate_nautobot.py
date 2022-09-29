@@ -79,7 +79,7 @@ class PopulateNautobot(Job):
                 facility=site['name'],
                 description=f"{site['name']} located in {site['municipality']}"
             )
-            prefix = str(self.parent_prefix.f.get_first_available_prefix().network)
+            prefix = str(self.parent_prefix.get_first_available_prefix().network)
             Prefix.objects.create(network=prefix, prefix_length=22, site=site)
 
     def _create_device_roles(self):
