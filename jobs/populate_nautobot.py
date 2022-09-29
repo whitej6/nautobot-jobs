@@ -107,7 +107,7 @@ class PopulateNautobot(Job):
             "dist": Platform.objects.create(name="arista_eos", slug="arista_eos", manufacturer=arista),
         }
 
-    def _connect_devices(dev1, dev2, prefix):
+    def _connect_devices(self, dev1, dev2, prefix):
         iface1 = dev1.interfaces.filter(cable__isnull=True).exclude(mgmt_only=True).first()
         iface2 = dev2.interfaces.filter(cable__isnull=True).exclude(mgmt_only=True).first()
         prefix = str(prefix.get_first_available_prefix().network)
