@@ -138,68 +138,68 @@ class PopulateNautobot(Job):
         status = Status.objects.get(name="Active")
         for site in Site.objects.all():
             prefix = Prefix.objects.filter(site=site).first()
-            wan1 = Device.objects.create(
+            wan1 = Device.objects.get_or_create(
                 name=f"{site.slug}-wan-01",
                 platform=platforms["wan"],
                 device_role=roles["wan"]["role"],
                 device_type=roles["wan"]["type"],
                 site=site,
                 status=status
-            )
-            wan2 = Device.objects.create(
+            )[0]
+            wan2 = Device.objects.get_or_create(
                 name=f"{site.slug}-wan-02",
                 platform=platforms["wan"],
                 device_role=roles["wan"]["role"],
                 device_type=roles["wan"]["type"],
                 site=site,
                 status=status
-            )
+            )[0]
             self._connect_devices(wan1, wan2, prefix)
-            bb1 = Device.objects.create(
+            bb1 = Device.objects.get_or_create(
                 name=f"{site.slug}-bb-01",
                 platform=platforms["bb"],
                 device_role=roles["bb"]["role"],
                 device_type=roles["bb"]["type"],
                 site=site,
                 status=status
-            )
-            bb2 = Device.objects.create(
+            )[0]
+            bb2 = Device.objects.get_or_create(
                 name=f"{site.slug}-bb-02",
                 platform=platforms["bb"],
                 device_role=roles["bb"]["role"],
                 device_type=roles["bb"]["type"],
                 site=site,
                 status=status
-            )
+            )[0]
             self._connect_devices(wan1, bb1, prefix)
             self._connect_devices(wan2, bb2, prefix)
-            dist1 = Device.objects.create(
+            dist1 = Device.objects.get_or_create(
                 name=f"{site.slug}-dist-01",
                 platform=platforms["dist"],
                 device_role=roles["dist"]["role"],
                 device_type=roles["dist"]["type"],
                 site=site,
                 status=status
-            )
-            dist2 = Device.objects.create(
+            )[0]
+            dist2 = Device.objects.get_or_create(
                 name=f"{site.slug}-dist-02",
                 platform=platforms["dist"],
                 device_role=roles["dist"]["role"],
                 device_type=roles["dist"]["type"],
                 site=site,
                 status=status
-            )
+            )[0]
             self._connect_devices(bb1, dist1, prefix)
             self._connect_devices(dist2, dist2, prefix)
             for i in range(44):
-                access = Device.objects.create(
+                access = Device.objects.get_or_create(
                     name=f"{site.slug}-access-0{i}",
                     platform=platforms["access"],
                     device_role=roles["access"]["role"],
                     device_type=roles["access"]["type"],
                     site=site,
                     status=status
-                )
+                )[0]
                 self._connect_devices(access, dist1, prefix)
                 self._connect_devices(access, dist2, prefix)
 
