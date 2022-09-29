@@ -113,6 +113,7 @@ class PopulateNautobot(Job):
         prefix = str(prefix.get_first_available_prefix().network)
         prefix = Prefix.objects.create(network=prefix, prefix_length=31, site=dev1.site, is_pool=True)
         ip = prefix.get_first_available_ip().split("/")
+        self.log_info(ip)
         IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface1.id)
         ip = prefix.get_first_available_ip().split("/")
         IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface2.id)
