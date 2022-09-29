@@ -190,7 +190,7 @@ class PopulateNautobot(Job):
                 status=status
             )[0]
             self._connect_devices(bb1, dist1, prefix)
-            self._connect_devices(dist2, dist2, prefix)
+            self._connect_devices(bb2, dist2, prefix)
             for i in range(44):
                 access = Device.objects.get_or_create(
                     name=f"{site.slug}-access-0{i}",
