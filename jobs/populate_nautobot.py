@@ -207,5 +207,7 @@ class PopulateNautobot(Job):
         self.log_info(f"Creating {num_sites}.")
         self._create_sites(unique_airports)
         self.log_info("Sites created.")
+
+    def post_run(self):
         self.log_info("Creating Devices.")
         self._create_devices()
