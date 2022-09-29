@@ -107,14 +107,12 @@ class PopulateNautobot(Job):
             "dist": Platform.objects.create(name="arista_eos", slug="arista_eos", manufacturer=arista),
         }
 
-    def _connect_devices(self, dev1, dev2, prefix):
+    def _connect_devices(dev1, dev2, prefix):
         iface1 = dev1.interfaces.filter(cable__isnull=True).exclude(mgmt_only=True).first()
         iface2 = dev2.interfaces.filter(cable__isnull=True).exclude(mgmt_only=True).first()
         prefix = str(prefix.get_first_available_prefix().network)
         prefix = Prefix.objects.create(network=prefix, prefix_length=31, site=dev1.site, is_pool=True)
         ip = prefix.get_first_available_ip().split("/")
-        self.log_info(iface1)
-        self.log_info(iface2)
         IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface1.id)
         ip = prefix.get_first_available_ip().split("/")
         IPAddress.objects.create(host=ip[0], prefix_length=ip[1], assigned_object_type=IFACE_CT, assigned_object_id=iface2.id)
@@ -202,9 +200,11 @@ class PopulateNautobot(Job):
 
     def run(self, data, commit):
         self.log_info("Gathering Site Codes.")
-        num_sites = data.get("num_sites")
-        unique_airports = self._get_airport_sites(num_sites)
-        self.log_info(f"Creating {num_sites}.")
+        self.num_sites = data.get("num_sites")
+
+    def post_run(self):
+        unique_airports = self._get_airport_sites(self.num_sites)
+        self.log_info(f"Creating {self.num_sites}.")
         self._create_sites(unique_airports)
         self.log_info("Sites created.")
         self.log_info("Creating Devices.")
